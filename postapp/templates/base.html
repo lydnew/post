@@ -35,6 +35,10 @@
         <div class="col-md-8">{% block container %}{% endblock %}</div>
         <div class="col-md-4">
             <div class="well">
+                <form class="form-horizontal" action="/post/search/" method="POST">
+                    {% csrf_token %}
+                    <input type="text" class="form-control" placeholder="搜索" name='keyword'>
+                </form>
                 <h4>热门文章</h4>
                 <!-- <iframe src ="/post/top10/" frameborder="0" id="iFrame1" name="iFrame1"
                         onload="this.height=iFrame1.document.body.scrollHeight">
