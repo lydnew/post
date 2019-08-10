@@ -20,6 +20,9 @@
                 <a class="navbar-brand" href="/">GeekPy</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
+
+                <!-- <li><a>Hello, {{request.session.val}}</a> -->
+                <li><a href="/post/create/">发表新帖</a></li>   
                 {% if request.session.uid %}
                 <li><a>Hello, {{request.session.nickname}}</a></li>
                 <li><a href="/user/logout/">退出</a></li>

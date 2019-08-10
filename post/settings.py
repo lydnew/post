@@ -1,3 +1,5 @@
+# coding: utf-8
+
 """
 Django settings for post project.
 
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'postapp',
+    'user',
 ]
 
 
@@ -56,7 +59,9 @@ ROOT_URLCONF = 'post.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'postapp/templates')],
+        'DIRS': [os.path.join(BASE_DIR,'postapp/templates'),
+                os.path.join(BASE_DIR,'user/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,3 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#上传文件的配置
+MEDIA_URL = '/medias/'
+MEDIA_ROOT = 'medias'
