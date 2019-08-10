@@ -67,7 +67,9 @@ def read(request):
     
 
 def post_list(request):
-    # posts = Post.objects.all()
+    if 'val' not in request.session:
+        import random
+        request.session['val'] = random.randint(1,1000000)
     page = int(request.GET.get('page',1))
     total = Post.objects.count()
     pages = ceil(total / 5)  # 总页数
