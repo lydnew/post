@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^post/read/', post_views.read),
     url(r'^post/list/', post_views.post_list),
     url(r'^post/search/', post_views.search),
+    url(r'^post/bulkcreate/', post_views.bulk_create),
 ]
