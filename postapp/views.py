@@ -2,9 +2,10 @@ from math import ceil
 
 from django.shortcuts import render,redirect
 
-from common.keys import POST_KEY
+
+from common.keys import POST_KEY,READ_COUNT_KEY
 from postapp.models import Post
-from postapp.helper import page_cache
+from postapp.helper import page_cache, read_count
 
 
 def bulk_create(request):
@@ -65,6 +66,7 @@ def edit(request):
         return render(request,'edit.html',{'post':post})
 
 
+@read_count
 @page_cache(3)
 def read(request):
     # print(11111,request.path)
@@ -82,6 +84,7 @@ def read(request):
     #     print('get from db: %s' % post)
     """
     post = Post.objects.get(id=post_id)
+    
 
     return render(request,'read.html',{'post':post})
     
@@ -105,3 +108,10 @@ def search(request):
     keyword = request.POST.get('keyword')
     posts = Post.objects.filter(content__contains=keyword)
     return render(request,'search.html',{'posts':posts})
+
+
+def top10(request):
+    '''
+    排名  文章名  阅读量
+    '''
+    return render(request,'top10.html',data)

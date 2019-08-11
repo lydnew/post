@@ -2,8 +2,8 @@
 
 from django.core.cache import cache
 
-from common.keys import PAGE_KEY
-
+from common.keys import PAGE_KEY,READ_COUNT_KEY
+from common import rds
 
 '''
     缓存更新
@@ -23,5 +23,14 @@ def page_cache(timeout):
             return response
         return wrap2
     return wrap1
+
+
+
+def read_count(read_view):
+    def wrap(requests):
+        post_id = int(requests.GET.get('post_id',1))
+        rds.zincrby(READ_COUNT_KEY,post_id)
+        return read_view(requests)
+    return wrap
 
 
