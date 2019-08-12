@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password,check_password
 
 from user.models import User
 from user.forms import RegisterForm
+from user.helper import login_required
 
 
 def register(request):
@@ -38,12 +39,16 @@ def login(request):
         except User.DoesNotExist:
             return render(request,'login.html',{'error':'用户不存在'})
     return render(request,'login.html')
-    
+
+
+@login_required    
 def user_info(request):
     uid = request.session['uid']
     user = User.objects.get(id=uid)
     return render(request,'user_info.html',{'user':user})
-    
+
+
+@login_required
 def logout(request):
     request.session.flush()
     return redirect('/user/login/')
