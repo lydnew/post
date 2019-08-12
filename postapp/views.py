@@ -4,7 +4,7 @@ from django.shortcuts import render,redirect
 
 
 from common.keys import POST_KEY,READ_COUNT_KEY
-from postapp.models import Post
+from postapp.models import Post,Comment
 from postapp.helper import page_cache, read_count,get_top_n
 from user.helper import login_required
 
@@ -90,10 +90,9 @@ def read(request):
     #     print('get from db: %s' % post)
     """
     post = Post.objects.get(id=post_id)
-    
 
     return render(request,'read.html',{'post':post})
-    
+
 
 @page_cache(1)
 def post_list(request):
@@ -122,3 +121,19 @@ def top10(request):
     '''
     post_rank = get_top_n(10)
     return render(request,'top10.html',{'rank_data':post_rank})
+
+
+@login_required
+def comment(request):
+    if request.method == "POST":
+        uid = request.session['uid']
+        post_id = request.POST.get('post_id')
+        content = request.POST.get('content')
+        Comment.objects.create(uid=uid,post_id=post_id,content=content)
+        return redirect('/post/read/?post_id=%s' % post_id)
+    return redirect('/')
+
+
+def tag_filter(request):
+    
+    return render(request,'search.html',{'posts':posts})

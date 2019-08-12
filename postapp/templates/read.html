@@ -15,14 +15,14 @@
     {{post.content | safe | escape | linebreaks}}
 </p>
 
-<!-- {% if tags %}
+{% if tags %}
 <div>
     <strong>Tags:</strong>
-    {% for tag in tags %}
+    {% for tag in post.tags %}
     <a href="/post/tag/?tag_id={{tag.id}}">{{tag.name}}</a>
     {% endfor %}
 </div>
-{% endif %} -->
+{% endif %}
 
 <hr>
 <form method="POST" action="/post/comment/">
@@ -34,9 +34,10 @@
 </form>
 <hr>
 <div>
-    {% for comment in comments %}
-    <p>
-        <div><strong>名称：</strong>{{comment.name}}</div>
+    {% for comment in post.comments %}
+    <p> 
+        <div><strong>姓名：</strong>{{comment.auth.nickname}}</div>
+        <div><strong>时间：</strong>{{comment.create | date:"Y-m-d H:i:s"}}</div>
         <div><strong>内容：</strong>{{comment.content|safe|escape|linebreaks}}</div>
     </p>
     {% if not forloop.last %}<hr>{% endif %}
