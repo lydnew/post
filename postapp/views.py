@@ -5,7 +5,7 @@ from django.shortcuts import render,redirect
 
 from common.keys import POST_KEY,READ_COUNT_KEY
 from postapp.models import Post
-from postapp.helper import page_cache, read_count
+from postapp.helper import page_cache, read_count,get_top_n
 
 
 def bulk_create(request):
@@ -114,4 +114,5 @@ def top10(request):
     '''
     排名  文章名  阅读量
     '''
-    return render(request,'top10.html',data)
+    post_rank = get_top_n(10)
+    return render(request,'top10.html',{'rank_data':post_rank})

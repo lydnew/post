@@ -5,7 +5,7 @@
 </head>
 <body style="background-color: transparent;">
     <ol>
-        {% for d in rand_data %}
+        {% for d in rank_data %}
         <li>
             <a href="/post/read/?post_id={{d.0.id}}" onclick="window.top.location.href=this.href">{{d.0.title}}</a>
             <span style="float: right;">{{d.1}}</span>
