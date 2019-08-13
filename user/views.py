@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password,check_password
 
 from user.models import User
 from user.forms import RegisterForm
-from user.helper import login_required
+from user.helper import login_required, check_permission
 
 
 def register(request):
@@ -53,3 +53,9 @@ def logout(request):
     request.session.flush()
     return redirect('/user/login/')
 
+
+@check_permission('admin')
+def del_user(request):
+    need_delete_user_id = request.GET.get('user_id')
+    need_delete_user = User.objects.get(id=need_delete_user_id)
+    need_delete_user.delete()

@@ -4,9 +4,9 @@ from django.shortcuts import render,redirect
 
 
 from common.keys import POST_KEY,READ_COUNT_KEY
-from postapp.models import Post,Comment
+from postapp.models import Post,Comment,Tag
 from postapp.helper import page_cache, read_count,get_top_n
-from user.helper import login_required
+from user.helper import login_required, check_permission
 
 
 @login_required
@@ -41,6 +41,7 @@ def bulk_create(request):
 
 
 @login_required
+@check_permission('manager')
 def create(request):
     if request.method == 'POST':
         title =request.POST.get('title')
@@ -65,11 +66,17 @@ def edit(request):
         # # 修改完成后添加到缓存
         # key = POST_KEY % post_id
         # cache.set(key, post)
+
+        # 更新标签
+        tag_names = request.POST.get('tags','')
+        tag_names = [t.strip().title() for t in tag_names.split(',') if t.strip()]
+        post.update_tags(tag_names)
         return redirect('/post/read/?post_id=%s' % post.id)
     else:
         post_id = int(request.GET.get('post_id',1))
         post = Post.objects.get(id=post_id)
-        return render(request,'edit.html',{'post':post})
+        tag_names = ','.join(t.name for t in post.tags())
+        return render(request,'edit.html',{'post':post,'tags':tag_names})
 
 
 @read_count
@@ -124,6 +131,7 @@ def top10(request):
 
 
 @login_required
+@check_permission('user')
 def comment(request):
     if request.method == "POST":
         uid = request.session['uid']
@@ -135,5 +143,6 @@ def comment(request):
 
 
 def tag_filter(request):
-    
-    return render(request,'search.html',{'posts':posts})
+    tag_id = request.GET.get('tag_id')
+    tag = Tag.objects.get(id=tag_id)
+    return render(request, 'search.html', {'posts':tag.posts()})
