@@ -2,7 +2,7 @@
 
 from django.shortcuts import redirect,render
 
-from user.models import Permission,User
+from user.models import User
 
 def login_required(view_func):
     def wrap(request):
@@ -20,11 +20,8 @@ def check_permission(Permission_name):
             uid = request.session['uid']
             user = User.objects.get(id=uid)
 
-            # 获取需要的权限
-            need_perm = Permission.objects.get(name=Permission_name)
-
             # 权限检查
-            if user.perm.level >= need_perm.level:
+            if user.has_perm(Permission_name):
                 return view_func(request)
             else:
                 return render(request,'blocker.html')

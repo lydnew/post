@@ -1,3 +1,16 @@
+'''
+    User
+
+        UserRoleRelation
+
+    Role
+
+        RolePermRelation
+
+    Permission
+
+'''
+
 from django.db import models
 
 
@@ -20,7 +33,51 @@ class User(models.Model):
             self._perm = Permission.objects.get(id=self.Perm_id)
         return self._perm
 
+    def has_perm(self,perm_name):
+        return True
+
+
+class Role(models.Model):
+    name = models.CharField(max_length=32, unique=True)
+
+
+class UserRoleRelation(models.Model):
+    '''用户和角色的对应关系'''
+    user_id = models.IntegerField()
+    role_id = models.IntegerField()
+
+    @classmethod
+    def add_role_for_user(cls, user_id, role_name):
+        role = Role.objects.get(name=role_name).only('id')
+        cls.objects.get_or_creat(user_id=user_id, role_id=role.id)
+
+    @classmethod
+    def del_role_from_user(cls, user_id, role_name):
+        role = Role.objects.get(name=role_name).only('id')
+        cls.objects.get(user_id=user_id, role_id=role.id).delete()
+
 
 class Permission(models.Model):
+    '''权限表'''
+    # creat_post
+    # modify_post
+    # comment
+    # delete_post
     name = models.CharField(max_length=32, unique=True)
-    level = models.IntegerField()
+
+
+class RolePermRelation(models.Model):
+    role_id = models.IntegerField()
+
+    @classmethod
+    def add_perm_for_role(cls, role_id, perm_name):
+        perm = Permission.objects.get(name=perm_name)
+        cls.objects.get_or_creat(role_id=role_id, perm_id=perm.id)
+
+    @classmethod
+    def del_perm_from_role(cls,role_id,perm_name):
+        perm = Permission.objects.get(name=perm_name)
+        cls.objects.get(role_id=role_id, perm_id=perm.id).delete()
+
+
+
