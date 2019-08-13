@@ -25,20 +25,29 @@ class User(models.Model):
     age = models.IntegerField()
     sex = models.CharField(choices=SEX, max_length=8)
     icon = models.ImageField()
-    Perm_id = models.IntegerField()
 
-    @property
-    def perm(self):
-        if not hasattr(self, "_perm"):
-            self._perm = Permission.objects.get(id=self.Perm_id)
-        return self._perm
+    def roles(self):
+        '''用户所有的角色'''
+        relations = UserRoleRelation.objects.filter(user_id=self.id).only('role_id')
+        role_id_list = [r.role_id for r in relations]
+        return Role.objects.filter(id__in=role_id_list)
 
     def has_perm(self,perm_name):
-        return True
+        for role in self.roles():
+            for perm in role.perms():
+                if perm.name == perm_name:
+                    return True
+        return False
 
 
 class Role(models.Model):
     name = models.CharField(max_length=32, unique=True)
+
+    def perms(self):
+        '''角色所有的权限'''
+        relations = RolePermRelation.objects.filter(role_id=self.id).only('perm_id')
+        perm_id_list = [r.perm_id for r in relations]
+        return Permission.objects.filter(id__in=perm_id_list)
 
 
 class UserRoleRelation(models.Model):
@@ -48,12 +57,12 @@ class UserRoleRelation(models.Model):
 
     @classmethod
     def add_role_for_user(cls, user_id, role_name):
-        role = Role.objects.get(name=role_name).only('id')
-        cls.objects.get_or_creat(user_id=user_id, role_id=role.id)
+        role = Role.objects.get(name=role_name)
+        cls.objects.get_or_create(user_id=user_id, role_id=role.id)
 
     @classmethod
     def del_role_from_user(cls, user_id, role_name):
-        role = Role.objects.get(name=role_name).only('id')
+        role = Role.objects.get(name=role_name)
         cls.objects.get(user_id=user_id, role_id=role.id).delete()
 
 
@@ -67,12 +76,14 @@ class Permission(models.Model):
 
 
 class RolePermRelation(models.Model):
+    '''角色和权限的关系表'''
     role_id = models.IntegerField()
+    perm_id = models.IntegerField()
 
     @classmethod
     def add_perm_for_role(cls, role_id, perm_name):
         perm = Permission.objects.get(name=perm_name)
-        cls.objects.get_or_creat(role_id=role_id, perm_id=perm.id)
+        cls.objects.get_or_create(role_id=role_id, perm_id=perm.id)
 
     @classmethod
     def del_perm_from_role(cls,role_id,perm_name):

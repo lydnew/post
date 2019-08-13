@@ -24,6 +24,6 @@ def check_permission(Permission_name):
             if user.has_perm(Permission_name):
                 return view_func(request)
             else:
-                return render(request,'blocker.html')
+                return render(request,'blockers.html')
         return wrap2
     return wrap1

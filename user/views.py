@@ -54,8 +54,9 @@ def logout(request):
     return redirect('/user/login/')
 
 
-@check_permission('admin')
+# @check_permission('admin')
 def del_user(request):
     need_delete_user_id = request.GET.get('user_id')
     need_delete_user = User.objects.get(id=need_delete_user_id)
     need_delete_user.delete()
+    return redirect('/')
